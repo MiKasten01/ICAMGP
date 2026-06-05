@@ -1,5 +1,14 @@
+"""
+pipeline_clean.py — GitHub 发布特供版
+======================================
+全链路模型评估流水线，使用 mynet_clean（解耦版 MyNet）。
+
+用法:
+    python pipeline_clean.py
+"""
+
 import os
-print("Starting pipeline.py execution...")
+print("Starting pipeline_clean.py execution...")
 import json
 import pandas as pd
 import numpy as np
@@ -8,7 +17,7 @@ from typing import Dict, Any, Optional, List, Tuple
 from dataset.new_dataset import load_dataset, MyDataset
 from feature_cluster import cluster
 from feature_select import feature_selector
-from mynet import MyNet, TorchModelType
+from mynet_clean import MyNet, TorchModelType
 import warnings
 
 
@@ -35,7 +44,14 @@ def run_pipeline(
     random_seed: int = 42
 ) -> Dict[str, Any]:
     """
-    全链路模型评估函数
+    全链路模型评估函数（解耦版 — 仅支持 CAM 系列模型）
+
+    支持的 model_type:
+        - 'MLP'       : 基线多层感知机
+        - 'CAM'       : ClusterSparseAttentionModel（局部 + 全局注意力）
+        - 'woGlobal'  : 消融实验 — 去除簇间（全局）注意力
+        - 'woLocal'   : 消融实验 — 去除簇内（局部）注意力
+        - 'woCluster' : 消融实验 — 所有特征视为单一簇
     
     Args:
         dataset_name: 数据集名称 (config key)
@@ -44,7 +60,7 @@ def run_pipeline(
         cluster_params: 聚类参数字典 (e.g. {'ld_threshold': 0.2, 'min_cluster_size': 5})
         enable_feature_selection: 是否启用特征选择
         selection_params: 特征选择参数字典 (e.g. {'max_snp': 10000, 'p_threshold': 0.05})
-        model_type: 模型类型 ('CAM', 'MLP', 'ResGS', etc.)
+        model_type: 模型类型
         model_params: 模型超参数字典 (e.g. {'hidden_dim': 64, 'dropout': 0.2})
         training_params: 训练参数字典 (e.g. {'k1_fold': 5, 'num_restarts': 1})
         fit_method: 训练方法 ('torch_cv_fit', 'blup_fit', 'tradition_fit')
@@ -158,7 +174,7 @@ def run_pipeline(
         num_restarts = training_params.get('num_restarts', 1)
         early_stopping_patience = training_params.get('early_stopping_patience', 5)
         
-        # Initialize MyNet
+        # Initialize MyNet (clean version)
         net = MyNet(
             dataset=dataset,
             torch_selection=torch_model_type,
@@ -174,7 +190,6 @@ def run_pipeline(
         
     elif fit_method == 'blup_fit':
         print("[Pipeline] Training BLUP model...")
-        # Initialize MyNet (torch_selection defaults to MLP, ignored for BLUP)
         net = MyNet(
             dataset=dataset,
             feature_class=feature_class,
@@ -185,7 +200,6 @@ def run_pipeline(
         
     elif fit_method == 'tradition_fit':
         print("[Pipeline] Training Traditional ML models...")
-        # Initialize MyNet (torch_selection defaults to MLP, ignored for tradition_fit)
         net = MyNet(
             dataset=dataset,
             feature_class=feature_class,
@@ -211,6 +225,7 @@ def run_pipeline(
         'predictions': df_pred,
         'metrics': df_metrics
     }
+
 
 if __name__ == "__main__":
     # Example usage

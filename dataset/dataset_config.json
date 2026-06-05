@@ -1,0 +1,125 @@
+{
+    "ALMA": {
+        "dataset_type": "GeneralDataset1",
+        "data_path": "/home/ubuntu/students/lj/cam/dataset/AD",
+        "X_txt_name": "AD_3917_genotype.txt",
+        "Y_txt_name": "American_duroc_pheno_adj.txt",
+        "target_col": "ALMA",
+        "h2": 0.37
+    },
+    "ALMD": {
+        "dataset_type": "GeneralDataset1",
+        "data_path": "/home/ubuntu/students/lj/cam/dataset/AD",
+        "X_txt_name": "AD_3917_genotype.txt",
+        "Y_txt_name": "American_duroc_pheno_adj.txt",
+        "target_col": "ALMD",
+        "h2": 0.30
+    },
+    "CLMA": {
+        "dataset_type": "GeneralDataset1",
+        "data_path": "/home/ubuntu/students/lj/cam/dataset/CD",
+        "X_txt_name": "CD_2153_genotype.txt",
+        "Y_txt_name": "Canadian_duroc_pheno_adj.txt",
+        "target_col": "CLMA",
+        "h2": 0.38
+    },
+    "CLMD": {
+        "dataset_type": "GeneralDataset1",
+        "data_path": "/home/ubuntu/students/lj/cam/dataset/CD",
+        "X_txt_name": "CD_2153_genotype.txt",
+        "Y_txt_name": "Canadian_duroc_pheno_adj.txt",
+        "target_col": "CLMD",
+        "h2": 0.36
+    },
+    "Y_age": {
+        "dataset_type": "GeneralDataset1",
+        "data_path": "/home/ubuntu/students/lj/cam/dataset/yang_4382",
+        "X_txt_name": "yy_4328_genotype.txt",
+        "Y_txt_name": "pheno_adj.txt",
+        "target_col": "Y_age",
+        "h2": 0.23
+    },
+    "Y_bf": {
+        "dataset_type": "GeneralDataset1",
+        "data_path": "/home/ubuntu/students/lj/cam/dataset/yang_4382",
+        "X_txt_name": "yy_4328_genotype.txt",
+        "Y_txt_name": "pheno_adj.txt",
+        "target_col": "Y_bf",
+        "h2": 0.37
+    },
+    "Z_age": {
+        "dataset_type": "GeneralDataset1",
+        "data_path": "/home/ubuntu/students/lj/cam/dataset/zhang_1600",
+        "X_txt_name": "yy_1600_genotype.txt",
+        "Y_txt_name": "grow_adj.txt",
+        "target_col": "Z_age",
+        "h2": 0.19
+    },
+    "Z_bf": {
+        "dataset_type": "GeneralDataset1",
+        "data_path": "/home/ubuntu/students/lj/cam/dataset/zhang_1600",
+        "X_txt_name": "yy_1600_genotype.txt",
+        "Y_txt_name": "grow_adj.txt",
+        "target_col": "Z_bf",
+        "h2": 0.36
+    },
+    "HT": {
+        "dataset_type": "PlinkDataset",
+        "data_path": "/home/ubuntu/students/lj/cam/dataset/more_dataset",
+        "tar_name": "sorghum_HT.tar.gz",
+        "extract_dir": "plink_data",
+        "encoding": "default",
+        "label_column": "trait",
+        "h2": 0.7569
+    },
+    "MO": {
+        "dataset_type": "PlinkDataset",
+        "data_path": "/home/ubuntu/students/lj/cam/dataset/more_dataset",
+        "tar_name": "sorghum_MO.tar.gz",
+        "extract_dir": "plink_data",
+        "encoding": "default",
+        "label_column": "trait",
+        "h2": 0.6724
+    },
+    "YLD": {
+        "dataset_type": "PlinkDataset",
+        "data_path": "/home/ubuntu/students/lj/cam/dataset/more_dataset",
+        "tar_name": "sorghum_YLD.tar.gz",
+        "extract_dir": "plink_data",
+        "encoding": "default",
+        "label_column": "trait",
+        "h2": 0.2601
+    },
+    "Env1": {
+        "dataset_type": "WheatDataset",
+        "data_path": "/home/ubuntu/students/lj/cam/dataset/wheat",
+        "X_csv_name": "wheat_X.csv",
+        "Y_csv_name": "wheat_Y.csv",
+        "target_col": "1",
+        "h2": 0.472
+    },
+    "Env2": {
+        "dataset_type": "WheatDataset",
+        "data_path": "/home/ubuntu/students/lj/cam/dataset/wheat",
+        "X_csv_name": "wheat_X.csv",
+        "Y_csv_name": "wheat_Y.csv",
+        "target_col": "2",
+        "h2": 0.472
+    },
+    "Env4": {
+        "dataset_type": "WheatDataset",
+        "data_path": "/home/ubuntu/students/lj/cam/dataset/wheat",
+        "X_csv_name": "wheat_X.csv",
+        "Y_csv_name": "wheat_Y.csv",
+        "target_col": "4",
+        "h2": 0.472
+    },
+    "Env5": {
+        "dataset_type": "WheatDataset",
+        "data_path": "/home/ubuntu/students/lj/cam/dataset/wheat",
+        "X_csv_name": "wheat_X.csv",
+        "Y_csv_name": "wheat_Y.csv",
+        "target_col": "5",
+        "h2": 0.472
+    }
+}

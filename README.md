@@ -1,41 +1,41 @@
 # ICAMGP: Intelligent Clustering Attention Model for Genomic Prediction
 
-一个整合特征聚类、特征选择和基于注意力机制的深度学习模型的**基因组预测系统**。通过聚类-注意力框架提高复杂基因组数据的预测精度。
+A comprehensive genomic prediction system that integrates feature clustering, feature selection, and attention-based deep learning models. Leveraging a clustering-attention framework to improve prediction accuracy on complex genomic data.
 
-## 📋 项目概述
+## 📋 Project Overview
 
-ICAMGP（Intelligent Clustering Attention Model for Genomic Prediction）是一套完整的基因组预测流水线，专门用于处理高维SNP特征数据。系统核心特点：
+ICAMGP (Intelligent Clustering Attention Model for Genomic Prediction) is a complete genomic prediction pipeline specifically designed for high-dimensional SNP feature data. Key features of the system:
 
-- **特征聚类**：支持多种聚类算法（HDBSCAN、KMeans、DBSCAN等），基于LD块原理或物理位置对SNP特征进行分组
-- **注意力机制**：采用簇内（局部）和簇间（全局）两层注意力架构，捕捉特征间的复杂交互
-- **特征选择**：通过p值和LD阈值进行特征筛选，降低维度
-- **多模型支持**：包括CAM（聚类注意力模型）、MLP基线、BLUP等传统方法
-- **消融研究**：支持woLocal、woGlobal、woCluster等变体，便于模型分析
+- **Feature Clustering**: Supports multiple clustering algorithms (HDBSCAN, KMeans, DBSCAN, etc.), grouping SNP features based on LD blocks or physical positions
+- **Attention Mechanism**: Employs a two-layer attention architecture with intra-cluster (local) and inter-cluster (global) attention to capture complex feature interactions
+- **Feature Selection**: Filters features based on p-values and LD thresholds to reduce dimensionality
+- **Multi-Model Support**: Includes CAM (Cluster Attention Model), MLP baseline, BLUP, and other traditional methods
+- **Ablation Studies**: Supports variants like woLocal, woGlobal, woCluster for model analysis
 
 ---
 
-## 🚀 快速开始
+## 🚀 Quick Start
 
-### 环境创建
+### Environment Setup
 
 ```bash
-# 创建 conda 环境
+# Create conda environment
 conda create -n cam python=3.12 numpy=1.26 pandas scikit-learn matplotlib scipy seaborn statsmodels
 conda activate cam
 
-# 安装 PyTorch（CUDA 12.8）
+# Install PyTorch (CUDA 12.8)
 pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu128
 
-# 安装其他依赖
+# Install additional dependencies
 pip install pandas-plink hdbscan
 ```
 
-### 基本使用
+### Basic Usage
 
 ```python
 from pipeline import run_pipeline
 
-# 运行完整流水线
+# Run the complete pipeline
 result = run_pipeline(
     dataset_name='CLMA',
     cluster_method='hdbscan_ldblock',
@@ -49,7 +49,7 @@ result = run_pipeline(
     random_seed=42
 )
 
-# 获取预测结果和性能指标
+# Get predictions and performance metrics
 predictions = result['predictions']
 metrics = result['metrics']
 print(metrics)
@@ -57,66 +57,66 @@ print(metrics)
 
 ---
 
-## 📁 项目结构
+## 📁 Project Structure
 
 ```
 ICAMGP/
-├── README.md                          # 项目说明文档
-├── pipeline.py                        # 主流水线模块（端到端处理）
-├── cam.py                            # 注意力模型实现
-├── mynet.py                          # 模型训练和评估框架
-├── feature_cluster.py                # 特征聚类算法集合
-├── feature_select.py                 # 特征选择模块
-├── rrblup.py                         # BLUP方法实现
+├── README.md                          # Project documentation
+├── pipeline.py                        # Main pipeline module (end-to-end processing)
+├── cam.py                            # Attention model implementation
+├── mynet.py                          # Model training and evaluation framework
+├── feature_cluster.py                # Feature clustering algorithms
+├── feature_select.py                 # Feature selection module
+├── rrblup.py                         # BLUP method implementation
 ├── dataset/
-│   └── new_dataset.py               # 数据加载与处理
-├── algorithm_comparison_results.csv  # 算法对比结果
-├── ld_threshold_search_results.csv  # LD阈值搜索结果
-└── p_threshold_search_results.csv   # p值阈值搜索结果
+│   └── new_dataset.py               # Data loading and processing
+├── algorithm_comparison_results.csv  # Algorithm comparison results
+├── ld_threshold_search_results.csv  # LD threshold search results
+└── p_threshold_search_results.csv   # P-value threshold search results
 ```
 
 ---
 
-## 🔑 核心模块详解
+## 🔑 Core Modules
 
-### 1. **pipeline.py** - 端到端流水线
+### 1. **pipeline.py** - End-to-End Pipeline
 
-主函数 `run_pipeline()` 执行完整的基因组预测流程：
+The main function `run_pipeline()` executes the complete genomic prediction process:
 
-#### 流水线步骤：
-1. **数据加载** - 从配置文件加载数据集
-2. **特征聚类** - 按指定方法对SNP特征进行分组
-3. **特征选择** - 基于p值和LD过滤特征
-4. **模型训练** - 使用选定的模型进行交叉验证
-5. **结果输出** - 返回预测结果和性能指标
+#### Pipeline Steps:
+1. **Data Loading** - Load dataset from configuration file
+2. **Feature Clustering** - Group SNP features using specified method
+3. **Feature Selection** - Filter features based on p-values and LD
+4. **Model Training** - Train selected model with cross-validation
+5. **Result Output** - Return predictions and performance metrics
 
-#### 参数说明：
+#### Parameter Reference:
 
-| 参数 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `dataset_name` | str | - | 数据集名称（配置文件中的key） |
-| `cluster_method` | str | 'hdbscan_ldblock' | 聚类方法 |
-| `model_type` | str | 'CAM' | 模型类型（MLP/CAM/woGlobal/woLocal/woCluster） |
-| `fit_method` | str | 'torch_cv_fit' | 训练方法（torch_cv_fit/blup_fit/tradition_fit） |
-| `k1_fold` | int | 5 | 交叉验证折数 |
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `dataset_name` | str | - | Dataset name (key in config file) |
+| `cluster_method` | str | 'hdbscan_ldblock' | Clustering method to use |
+| `model_type` | str | 'CAM' | Model type (MLP/CAM/woGlobal/woLocal/woCluster) |
+| `fit_method` | str | 'torch_cv_fit' | Training method (torch_cv_fit/blup_fit/tradition_fit) |
+| `k1_fold` | int | 5 | Number of cross-validation folds |
 
-#### 支持的模型类型：
+#### Supported Model Types:
 
-- **CAM** - 完整聚类注意力模型（局部+全局注意力）
-- **MLP** - 多层感知机基线
-- **woLocal** - 消融：移除簇内注意力
-- **woGlobal** - 消融：移除簇间注意力
-- **woCluster** - 消融：所有特征视为单一簇
-- **BLUP** - 传统贝叶斯方法
-- **RandomForest/SVM/Ridge** - 传统机器学习方法
+- **CAM** - Complete cluster attention model (local + global attention)
+- **MLP** - Multi-layer perceptron baseline
+- **woLocal** - Ablation: remove intra-cluster attention
+- **woGlobal** - Ablation: remove inter-cluster attention
+- **woCluster** - Ablation: treat all features as single cluster
+- **BLUP** - Traditional Bayesian method
+- **RandomForest/SVM/Ridge** - Traditional machine learning methods
 
 ---
 
-### 2. **cam.py** - 聚类注意力模型核心
+### 2. **cam.py** - Cluster Attention Model
 
-**ClusterSparseAttentionModel** 是系统的核心深度学习模型：
+**ClusterSparseAttentionModel** is the core deep learning model of the system:
 
-#### 模型架构：
+#### Model Architecture:
 
 ```
 Input Features [B, F]
@@ -132,70 +132,70 @@ Input Features [B, F]
 [5] Decoder → [B, output_dim]
 ```
 
-#### 关键参数：
+#### Key Parameters:
 
-- `feature_class` - 每个特征所属的簇ID
-- `hidden_dim` - 隐层维度（默认8）
-- `num_heads` - 注意力头数（默认1）
-- `ablation_type` - 消融类型（woLocal/woGlobal/woCluster）
+- `feature_class` - Cluster ID for each feature
+- `hidden_dim` - Hidden dimension size (default: 8)
+- `num_heads` - Number of attention heads (default: 1)
+- `ablation_type` - Ablation type (woLocal/woGlobal/woCluster)
 
-#### 特色设计：
+#### Design Features:
 
-1. **分层注意力** - 先在簇内做局部attention，再在簇间做全局attention
-2. **稀疏计算** - 利用聚类结构减少计算复杂度
-3. **分块处理** - 大规模数据自动分块处理，避免OOM
-4. **注意力可视化** - 支持返回attention权重用于解释性分析
+1. **Hierarchical Attention** - Local attention within clusters, then global attention between clusters
+2. **Sparse Computation** - Leverage clustering structure to reduce computational complexity
+3. **Chunked Processing** - Automatically process large-scale data in chunks to avoid OOM
+4. **Attention Visualization** - Support returning attention weights for interpretability
 
 ---
 
-### 3. **feature_cluster.py** - 多种聚类算法
+### 3. **feature_cluster.py** - Clustering Algorithms
 
-提供13+种聚类方法供用户选择：
+Provides 13+ clustering methods for user selection:
 
-#### 主要聚类方法：
+#### Main Clustering Methods:
 
-| 方法 | 说明 | 适用场景 |
-|------|------|----------|
-| `by_chr` | 按染色体分组 | 简单快速的基线 |
-| `by_chr_window` | 染色体+窗口划分 | 考虑物理位置 |
-| `position_cluster_chr` | 每条染色体层次聚类 | 基于位置的精细聚类 |
-| `kmeans` | K-means聚类 | 特征表达型聚类 |
-| `agg` | 层次聚类 | 生成聚类树 |
-| `hdbscan_ldblock` | LD块+HDBSCAN | **推荐**：结合遗传学和聚类理论 |
-| `dbscan` / `dbscan_chr` | DBSCAN聚类 | 自适应密度聚类 |
+| Method | Description | Use Case |
+|--------|-------------|----------|
+| `by_chr` | Group by chromosome | Fast baseline approach |
+| `by_chr_window` | Chromosome + window division | Consider physical position |
+| `position_cluster_chr` | Hierarchical clustering per chromosome | Position-based fine clustering |
+| `kmeans` | K-means clustering | Feature expression clustering |
+| `agg` | Agglomerative clustering | Generate clustering tree |
+| `hdbscan_ldblock` | LD block + HDBSCAN | **Recommended**: combines genetics and clustering theory |
+| `dbscan` / `dbscan_chr` | DBSCAN clustering | Adaptive density-based clustering |
 
-#### 最推荐的方法：**hdbscan_ldblock**
+#### Recommended Method: **hdbscan_ldblock**
 
 ```python
-# 基于LD块的HDBSCAN聚类
+# HDBSCAN clustering based on LD blocks
 cluster_with_hdbscan_ldblock(
     features,
-    threshold=0.2,           # LD相关性阈值
-    min_cluster_size=5,      # 最小簇大小
-    assign_outliers=True     # 将离群点分配到最近簇
+    threshold=0.2,           # LD correlation threshold
+    min_cluster_size=5,      # Minimum cluster size
+    assign_outliers=True     # Assign outliers to nearest cluster
 )
 ```
 
 ---
 
-### 4. **feature_select.py** - 特征筛选
+### 4. **feature_select.py** - Feature Selection
 
-基于关联统计的特征选择模块：
+Feature selection module based on association statistics:
 
 ```python
 selected_features, selected_feature_class = feature_selector(
     dataset,
     feature_class=feature_class,
-    p_threshold=0.05,        # p值阈值
-    max_snp=10000            # 最多保留特征数
+    p_threshold=0.05,        # P-value threshold
+    max_snp=10000            # Maximum number of features to retain
 )
 ```
 
 ---
 
-### 5. **mynet.py** - 模型训练框架
+### 5. **mynet.py** - Training Framework
 
-统一的模型训练和评估接口：
+Unified model training and evaluation interface:
 
 ```python
 net = MyNet(
@@ -206,21 +206,21 @@ net = MyNet(
     model_params={'hidden_dim': 32, 'dropout': 0.1}
 )
 
-# 使用PyTorch进行交叉验证
+# PyTorch-based cross-validation
 df_predictions, df_metrics = net.torch_cv_fit(
     num_restarts=1,
     early_stopping_patience=5
 )
 
-# 或使用传统方法
+# Or use traditional methods
 df_predictions, df_metrics = net.tradition_fit(n_jobs=-1)
 ```
 
 ---
 
-## 📊 输出结果
+## 📊 Output Results
 
-### 预测结果 (DataFrame)
+### Predictions (DataFrame)
 ```
 Sample_ID  Predicted_Value  True_Value  Residual
 S1         2.45            2.50        -0.05
@@ -228,7 +228,7 @@ S2         3.12            3.08        0.04
 ...
 ```
 
-### 性能指标 (DataFrame)
+### Performance Metrics (DataFrame)
 ```
 Metric          Value
 R²              0.852
@@ -239,9 +239,9 @@ Correlation     0.923
 
 ---
 
-## 🔬 实验配置示例
+## 🔬 Experiment Configuration Examples
 
-### 基础配置 - 快速测试
+### Basic Configuration - Quick Test
 
 ```python
 result = run_pipeline(
@@ -254,10 +254,10 @@ result = run_pipeline(
 )
 ```
 
-### 进阶配置 - 超参数调优
+### Advanced Configuration - Hyperparameter Tuning
 
 ```python
-# 网格搜索LD阈值
+# Grid search over LD thresholds
 for ld_thresh in [0.1, 0.2, 0.3, 0.5]:
     result = run_pipeline(
         dataset_name='CLMA',
@@ -268,10 +268,10 @@ for ld_thresh in [0.1, 0.2, 0.3, 0.5]:
     print(f"LD={ld_thresh}: {result['metrics']}")
 ```
 
-### 消融实验
+### Ablation Study
 
 ```python
-# 对比不同的模型变体
+# Compare different model variants
 for model_type in ['CAM', 'woLocal', 'woGlobal', 'woCluster', 'MLP']:
     result = run_pipeline(
         dataset_name='CLMA',
@@ -283,37 +283,37 @@ for model_type in ['CAM', 'woLocal', 'woGlobal', 'woCluster', 'MLP']:
 
 ---
 
-## 📈 性能对比
+## 📈 Performance Comparison
 
-本仓库包含对比结果：
+This repository includes comparison results:
 
-- `algorithm_comparison_results.csv` - 不同算法的性能对比
-- `ld_threshold_search_results.csv` - LD阈值敏感性分析
-- `p_threshold_search_results.csv` - p值阈值敏感性分析
+- `algorithm_comparison_results.csv` - Performance comparison across algorithms
+- `ld_threshold_search_results.csv` - LD threshold sensitivity analysis
+- `p_threshold_search_results.csv` - P-value threshold sensitivity analysis
 
 ---
 
-## 🔍 注意力可视化
+## 🔍 Attention Visualization
 
 ```python
-# 获取注意力权重用于可解释性分析
+# Extract attention weights for interpretability analysis
 model = ClusterSparseAttentionModel(feature_class, hidden_dim=32)
 output, local_attn_dict, global_attn = model(features, return_attn=True)
 
-# local_attn_dict: 每个簇的内部注意力权重
-# global_attn: 簇间的全局注意力权重
+# local_attn_dict: intra-cluster attention weights for each cluster
+# global_attn: inter-cluster global attention weights
 ```
 
 ---
 
-## 📚 数据集格式
+## 📚 Data Format
 
-数据集应包含：
-- **特征矩阵**：行为样本，列为SNP标记（格式: X{染色体}_{物理位置}_{等位基因}）
-- **表型标签**：连续值或二分类标签
-- **元数据**：可选的样本/特征注释
+Dataset should contain:
+- **Feature Matrix**: Rows are samples, columns are SNP markers (format: X{chromosome}_{physical_position}_{allele})
+- **Phenotype Labels**: Continuous or binary classification labels
+- **Metadata**: Optional sample/feature annotations
 
-### 特征列名示例
+### Feature Column Name Example
 ```
 X1_12345_A    X1_56789_G    X2_123456_T    ...
 X2_654321_C   X3_111111_A   ...
@@ -321,7 +321,7 @@ X2_654321_C   X3_111111_A   ...
 
 ---
 
-## 🛠️ 依赖项
+## 🛠️ Dependencies
 
 - Python 3.12+
 - PyTorch 2.0+
@@ -331,33 +331,33 @@ X2_654321_C   X3_111111_A   ...
 
 ---
 
-## 📖 使用流程总结
+## 📖 Usage Workflow Summary
 
-1. **数据准备** → 组织SNP特征数据和表型标签
-2. **聚类配置** → 选择合适的聚类方法（推荐hdbscan_ldblock）
-3. **模型选择** → 选择模型类型（推荐CAM）
-4. **流水线执行** → 调用run_pipeline()
-5. **结果分析** → 检查预测精度和注意力权重
-6. **超参优化** → 迭代调整参数以改进性能
-
----
-
-## 📝 引用
-
-如果您使用本项目，请引用相关研究工作。
+1. **Data Preparation** → Organize SNP feature data and phenotype labels
+2. **Clustering Configuration** → Select appropriate clustering method (recommended: hdbscan_ldblock)
+3. **Model Selection** → Choose model type (recommended: CAM)
+4. **Pipeline Execution** → Call run_pipeline()
+5. **Result Analysis** → Examine prediction accuracy and attention weights
+6. **Hyperparameter Optimization** → Iteratively adjust parameters to improve performance
 
 ---
 
-## 📞 联系方式
+## 📝 Citation
 
-有问题或建议，欢迎提出Issue或Pull Request。
-
----
-
-## 📄 许可证
-
-[根据需要添��许可证信息]
+If you use this project, please cite the relevant research work.
 
 ---
 
-**最后更新**: 2026年6月
+## 📞 Contact
+
+For questions or suggestions, feel free to open Issues or submit Pull Requests.
+
+---
+
+## 📄 License
+
+[Add license information as needed]
+
+---
+
+**Last Updated**: June 2026

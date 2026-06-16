@@ -37,7 +37,7 @@ from pipeline import run_pipeline
 
 # Run the complete pipeline
 result = run_pipeline(
-    dataset_name='CLMA',
+    dataset_name='Env1',
     cluster_method='hdbscan_ldblock',
     cluster_params={'ld_threshold': 0.2, 'min_cluster_size': 5},
     enable_feature_selection=True,
